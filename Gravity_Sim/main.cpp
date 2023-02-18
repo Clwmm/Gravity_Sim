@@ -19,15 +19,11 @@ int main()
 
     ImGui::SFML::Init(window);
 
-    bool circleExists = true;
-    float circleRadius = 200.0f;
-
-    sf::CircleShape shape(200.f, 100);
-    shape.setFillColor(sf::Color(204, 77, 5)); // Color circle
-    shape.setPosition(200, 200); // Center circle
-
     std::vector<std::shared_ptr<Entity>> entities;
     std::vector<std::shared_ptr<Entity>> tempEntities;
+
+    sf::CircleShape generatePointer(2, 5);
+    generatePointer.setFillColor(sf::Color(181, 38, 131, 150));
 
     float angle = 0;
     float speed = 10;
@@ -42,14 +38,8 @@ int main()
         255 / 255
     };
 
-
     float whiteColor[4] = { 255 / 255, 255 / 255, 255 / 255, 255/255 };
     float blackColor[4] = { 0 / 255, 0 / 255, 0 / 255, 255/255 };
-    auto a = std::make_shared<Entity>(5.0f, 20.0f, 100.0f, 45.0f, 400.0f, 400.0f, whiteColor);
-    auto b = std::make_shared<Entity>(3.0f, 25.0f, 75.0f, 90.0f, 300.0f, 400.0f, blackColor);
-
-    entities.push_back(a);
-    entities.push_back(b);
 
     for (int i = 0; i < 0; i++)
     {
@@ -66,12 +56,18 @@ int main()
         {
             ImGui::SFML::ProcessEvent(event);
 
-            /*if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
             {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                 auto temp = std::make_shared<Entity>((float)fromRandom(1, 8), (float)fromRandom(5, 30), 75.0f, (float)fromRandom(0, 365), mousePos.x, mousePos.y, whiteColor);
                 entities.push_back(temp);
-            }*/
+            }
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
+            {
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                posX = mousePos.x;
+                posY = mousePos.y;
+            }
             switch (event.type)
             {
             case sf::Event::Closed:
@@ -114,6 +110,7 @@ int main()
         ImGui::SliderFloat("Angle", &angle, 0.0f, 360.0f);
         ImGui::SliderFloat("Speed", &speed, 0.0f, 50.0f);
         ImGui::SliderFloat("Mass", &mass, 0.0f, 10000.0f);
+        ImGui::Text("You can set position using Left mouse button on window");
         ImGui::SliderFloat("Position X", &posX, 0.0f, window.getSize().x);
         ImGui::SliderFloat("Position Y", &posY, 0.0f, window.getSize().y);
         ImGui::ColorEdit4("Color", color);
@@ -132,15 +129,24 @@ int main()
         ImGui::End();
 
         if (play)
+        {
             for (auto e : entities)
+            {
+                // Gravity math
+
+
+                // Update position
                 e->update(deltaTime);
-        
+            }
+        }
 
-        shape.setRadius(circleRadius);
+        generatePointer.setPosition(posX, posY);
 
-        window.clear(sf::Color(18, 33, 43)); // Color background
+        // Render
+        window.clear(sf::Color(18, 33, 43));
         for (auto e : entities)
             e->draw(window);
+        window.draw(generatePointer);
         ImGui::SFML::Render(window);
         window.display();
     }
