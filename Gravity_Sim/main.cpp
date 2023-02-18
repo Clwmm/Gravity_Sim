@@ -29,9 +29,22 @@ int main()
     std::vector<std::shared_ptr<Entity>> entities;
     std::vector<std::shared_ptr<Entity>> tempEntities;
 
+    float angle = 0;
+    float speed = 10;
+    float mass = 500;
+    float posX = 400;
+    float posY = 400;
+    float color[4] =
+    {
+        255 / 255,
+        255 / 255,
+        255 / 255,
+        255 / 255
+    };
 
-    float whiteColor[3] = { 255 / 255, 255 / 255, 255 / 255 };
-    float blackColor[3] = { 0 / 255, 0 / 255, 0 / 255 };
+
+    float whiteColor[4] = { 255 / 255, 255 / 255, 255 / 255, 255/255 };
+    float blackColor[4] = { 0 / 255, 0 / 255, 0 / 255, 255/255 };
     auto a = std::make_shared<Entity>(5.0f, 20.0f, 100.0f, 45.0f, 400.0f, 400.0f, whiteColor);
     auto b = std::make_shared<Entity>(3.0f, 25.0f, 75.0f, 90.0f, 300.0f, 400.0f, blackColor);
 
@@ -53,12 +66,12 @@ int main()
         {
             ImGui::SFML::ProcessEvent(event);
 
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+            /*if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
             {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                 auto temp = std::make_shared<Entity>((float)fromRandom(1, 8), (float)fromRandom(5, 30), 75.0f, (float)fromRandom(0, 365), mousePos.x, mousePos.y, whiteColor);
                 entities.push_back(temp);
-            }
+            }*/
             switch (event.type)
             {
             case sf::Event::Closed:
@@ -83,24 +96,30 @@ int main()
             default:
                 break;
             }
-            /*if (event.type == sf::Event::Closed)
-                window.close();*/
         }
         deltaTime = deltaClock.getElapsedTime().asSeconds();
         ImGui::SFML::Update(window, deltaClock.restart());
 
-        ImGui::Begin("");
+        ImGui::Begin("Main");
         ImGui::Checkbox("Play", &play);
         ImGui::Text("Entities: %i Fps: %.2f", entities.size(), ImGui::GetIO().Framerate);
+        if (ImGui::Button("Clear"))
+        {
+            entities.clear();
+            tempEntities.clear();
+        }
         ImGui::End();
 
         ImGui::Begin("Generate");
-        ImGui::SliderFloat("Angle", &circleRadius, 0.0f, 360.0f);
-        ImGui::SliderFloat("Speed", &circleRadius, 0.0f, 50.0f);
-        ImGui::SliderFloat("Mass", &circleRadius, 0.0f, 10000.0f);
+        ImGui::SliderFloat("Angle", &angle, 0.0f, 360.0f);
+        ImGui::SliderFloat("Speed", &speed, 0.0f, 50.0f);
+        ImGui::SliderFloat("Mass", &mass, 0.0f, 10000.0f);
+        ImGui::SliderFloat("Position X", &posX, 0.0f, window.getSize().x);
+        ImGui::SliderFloat("Position Y", &posY, 0.0f, window.getSize().y);
+        ImGui::ColorEdit4("Color", color);
         if (ImGui::Button("Add to generate list"))
         {
-            auto temp = std::make_shared<Entity>((float)fromRandom(1, 8), (float)fromRandom(5, 30), 75.0f, (float)fromRandom(0, 365), 300.0f, 400.0f, whiteColor);
+            auto temp = std::make_shared<Entity>(mass/100, speed, mass, angle, posX, posY, color);
             tempEntities.push_back(temp);
         }
         ImGui::Text("Entities to generate: %i", tempEntities.size());
@@ -141,4 +160,7 @@ int main()
     Play i pause : gdy jest zatrzymana aplikacja mo¿na najechaæ myszk¹ na obiekty i sprawdziæ ich dane i je zmieniæ
     ruszanie widokiem (move and zoom in and zoom out)
     ...
+
+    dodatki:
+        wyœwietlanie elipsy poruszania siê cia³
 */
