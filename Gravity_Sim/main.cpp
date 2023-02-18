@@ -24,6 +24,7 @@ int main()
 
     sf::CircleShape generatePointer(2, 5);
     generatePointer.setFillColor(sf::Color(181, 38, 131, 150));
+    generatePointer.setOrigin(2, 2);
 
     float angle = 0;
     float speed = 10;
@@ -56,12 +57,12 @@ int main()
         {
             ImGui::SFML::ProcessEvent(event);
 
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+            /*if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
             {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                 auto temp = std::make_shared<Entity>((float)fromRandom(1, 8), (float)fromRandom(5, 30), 75.0f, (float)fromRandom(0, 365), mousePos.x, mousePos.y, whiteColor);
                 entities.push_back(temp);
-            }
+            }*/
             if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
             {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
@@ -116,7 +117,19 @@ int main()
         ImGui::ColorEdit4("Color", color);
         if (ImGui::Button("Add to generate list"))
         {
-            auto temp = std::make_shared<Entity>(mass/100, speed, mass, angle, posX, posY, color);
+            auto temp = std::make_shared<Entity>((float)mass/100, speed, mass, angle, posX, posY, color);
+            tempEntities.push_back(temp);
+        }
+        if (ImGui::Button("Add random object to list"))
+        {
+            float tempmass = (float)fromRandom(0, 10000);
+            float tempcolor[3] =
+            {
+                (float)(fromRandom(0,255) / 255),
+                (float)(fromRandom(0,255) / 255),
+                (float)(fromRandom(0,255) / 255)
+            };
+            auto temp = std::make_shared<Entity>((float)(tempmass/100), (float)fromRandom(1, 50), tempmass, (float)fromRandom(0, 365), 400.0f, 400.0f, tempcolor);
             tempEntities.push_back(temp);
         }
         ImGui::Text("Entities to generate: %i", tempEntities.size());
