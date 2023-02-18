@@ -18,10 +18,13 @@ int main()
     shape.setFillColor(sf::Color(204, 77, 5)); // Color circle
     shape.setPosition(200, 200); // Center circle
 
-    float color[3] = { 255 / 255, 255 / 255, 255 / 255 };
-    Entity a(12.0f, 14.0f, 15.0f, 0.0f, 0.0f, color);
+    float whiteColor[3] = { 255 / 255, 255 / 255, 255 / 255 };
+    float blackColor[3] = { 0 / 255, 0 / 255, 0 / 255 };
+    Entity a(5.0f, 20.0f, 100.0f, 45.0f, 400.0f, 400.0f, whiteColor);
+    Entity b(3.0f, 25.0f, 75.0f, 90.0f, 300.0f, 400.0f, blackColor);
 
     sf::Clock deltaClock;
+    float deltaTime = 0;
     while (window.isOpen())
     {
         sf::Event event;
@@ -32,7 +35,7 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-
+        deltaTime = deltaClock.getElapsedTime().asSeconds();
         ImGui::SFML::Update(window, deltaClock.restart());
 
         ImGui::Begin("Circle");
@@ -40,12 +43,16 @@ int main()
         ImGui::SliderFloat("Radius", &circleRadius, 10.0f, 400.0f);
         ImGui::End();
 
-        a.update(deltaClock.getElapsedTime().asMilliseconds());
+        
+        std::cout << "Dx: " << b.dx << "  Dy: " << b.dy << std::endl;
+        a.update(deltaTime);
+        b.update(deltaTime);
 
         shape.setRadius(circleRadius);
 
         window.clear(sf::Color(18, 33, 43)); // Color background
         a.draw(window);
+        b.draw(window);
         ImGui::SFML::Render(window);
         window.display();
     }
