@@ -8,16 +8,22 @@
 
 int fromRandom(int a, int b)
 {
-    return (rand() % (b - a + 1)) + a;
+    int ret = (rand() % (b - a + 1)) + a;
+    std::cout << ret << std::endl;
+    return ret;
 }
 
 int main()
 {
     srand(time(NULL));
-    sf::RenderWindow window(sf::VideoMode(1000, 1000), "Window Title");
+    sf::Vector2f screenSize = sf::Vector2f(1200, 1000);
+
+
+
+    sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y), "Window Title");
+    window.setFramerateLimit(60);
     
-    sf::View view(sf::Vector2f(0, 0), sf::Vector2f(1000, 1000));
-    window.setView(view);
+    sf::View view(sf::Vector2f(0, 0), sf::Vector2f(screenSize.x, screenSize.y));
 
     bool play = true;
 
@@ -82,6 +88,10 @@ int main()
                 window.close();
                 break;
 
+            case sf::Event::Resized:
+                view.setSize(sf::Vector2f(event.size.width, event.size.height));
+                break;
+
             case sf::Event::KeyPressed:
                 switch (event.key.code)
                 {
@@ -130,13 +140,7 @@ int main()
         if (ImGui::Button("Add random object to list"))
         {
             float tempmass = (float)fromRandom(0, 10000);
-            float tempcolor[3] =
-            {
-                (float)(fromRandom(0,255) / 255),
-                (float)(fromRandom(0,255) / 255),
-                (float)(fromRandom(0,255) / 255)
-            };
-            auto temp = std::make_shared<Entity>((float)(tempmass/100), (float)fromRandom(1, 50), tempmass, (float)fromRandom(0, 365), posX, posY, whiteColor);
+            auto temp = std::make_shared<Entity>((float)(tempmass/100), (float)fromRandom(1, 50), tempmass, (float)fromRandom(0, 365), posX, posY, color);
             tempEntities.push_back(temp);
         }
         ImGui::Text("Entities to generate: %i", tempEntities.size());
@@ -161,7 +165,7 @@ int main()
                         float dx = e->x - i->x;
                         float dy = e->y - i->y;
                         float r3;
-                        r3 *= sqrt(r3 = dx * dx + dy * dy);
+                        r3 *= sqrt(r3 = (dx * dx) + (dy * dy));
                         ax -= i->mass * 100 * dx / r3;
                         ax -= i->mass * 100 * dy / r3;
                     }
