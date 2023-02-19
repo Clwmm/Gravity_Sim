@@ -14,7 +14,11 @@ int fromRandom(int a, int b)
 int main()
 {
     srand(time(NULL));
-    sf::RenderWindow window(sf::VideoMode(800, 800), "Window Title");
+    sf::RenderWindow window(sf::VideoMode(1000, 1000), "Window Title");
+    
+    sf::View view(sf::Vector2f(0, 0), sf::Vector2f(1000, 1000));
+    window.setView(view);
+
     bool play = true;
 
     ImGui::SFML::Init(window);
@@ -29,8 +33,8 @@ int main()
     float angle = 0;
     float speed = 10;
     float mass = 500;
-    float posX = 400;
-    float posY = 400;
+    float posX = 0;
+    float posY = 0;
     float color[4] =
     {
         255 / 255,
@@ -65,9 +69,12 @@ int main()
             }*/
             if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
             {
+                sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+                sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
+
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                posX = mousePos.x;
-                posY = mousePos.y;
+                posX = worldPos.x;
+                posY = worldPos.y;
             }
             switch (event.type)
             {
@@ -129,7 +136,7 @@ int main()
                 (float)(fromRandom(0,255) / 255),
                 (float)(fromRandom(0,255) / 255)
             };
-            auto temp = std::make_shared<Entity>((float)(tempmass/100), (float)fromRandom(1, 50), tempmass, (float)fromRandom(0, 365), 400.0f, 400.0f, tempcolor);
+            auto temp = std::make_shared<Entity>((float)(tempmass/100), (float)fromRandom(1, 50), tempmass, (float)fromRandom(0, 365), posX, posY, whiteColor);
             tempEntities.push_back(temp);
         }
         ImGui::Text("Entities to generate: %i", tempEntities.size());
@@ -145,8 +152,22 @@ int main()
         {
             for (auto e : entities)
             {
+                float ax = 0, ay = 0;
                 // Gravity math
-
+                for (auto i : entities)
+                {
+                    if (e != i)
+                    {
+                        float dx = e->x - i->x;
+                        float dy = e->y - i->y;
+                        float r3;
+                        r3 *= sqrt(r3 = dx * dx + dy * dy);
+                        ax -= i->mass * 100 * dx / r3;
+                        ax -= i->mass * 100 * dy / r3;
+                    }
+                }
+                e->dx += ax * deltaTime;
+                e->dy += ay * deltaTime;
 
                 // Update position
                 e->update(deltaTime);
@@ -155,7 +176,24 @@ int main()
 
         generatePointer.setPosition(posX, posY);
 
+        //view
+        int viewSpeed = 1500;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E))
+            view.zoom(1 + (2 * deltaTime));
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q))
+            view.zoom(1 - (2 * deltaTime));
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+            view.move(0, -viewSpeed * deltaTime);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
+            view.move(0, viewSpeed * deltaTime);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+            view.move(-viewSpeed * deltaTime, 0);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+            view.move(viewSpeed * deltaTime, 0);
+            
+
         // Render
+        window.setView(view);
         window.clear(sf::Color(18, 33, 43));
         for (auto e : entities)
             e->draw(window);
