@@ -12,7 +12,6 @@ public:
 	double angle = 0;
 	double x = 0, y = 0, r = 0;
 	double dx = 0, dy = 0;
-	double ax = 0, ay = 0;
 	float color[4] = { 0, 0, 0, 0 };
 
 	sf::CircleShape shape;

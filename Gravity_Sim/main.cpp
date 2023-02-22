@@ -144,8 +144,8 @@ int main()
 
         ImGui::Begin("Generate");
         ImGui::SliderFloat("Angle", &angle, 0.0f, 360.0f);
-        ImGui::SliderFloat("Speed", &speed, 0.0f, 50.0f);
-        ImGui::SliderFloat("Mass", &mass, 0.0f, 10000.0f);
+        ImGui::SliderFloat("Speed", &speed, 0.0f, 10000.0f);
+        ImGui::SliderFloat("Mass", &mass, 0.0f, 1000000.0f);
         ImGui::Text("You can set position using Left mouse button on window");
         ImGui::SliderFloat("Position X", &posX, 0.0f, window.getSize().x);
         ImGui::SliderFloat("Position Y", &posY, 0.0f, window.getSize().y);
@@ -197,8 +197,8 @@ int main()
                         ay = sin(angle) * 5;*/
                     }
                 }
-                e->ax += ax;
-                e->ay += ay;
+                e->dx += ax;
+                e->dy += ay;
 
                 // Update position
                 e->update(deltaTime);
