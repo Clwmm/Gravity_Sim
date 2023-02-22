@@ -7,11 +7,11 @@
 class Entity
 {
 public:
-	float speed = 0;
-	float mass = 0;
-	float angle = 0;
-	float dx = 0, dy = 0;
-	float x = 0, y = 0, r = 0;
+	double speed = 0;
+	double mass = 0;
+	double angle = 0;
+	double dx = 0, dy = 0;
+	double x = 0, y = 0, r = 0;
 	float color[4] = { 0, 0, 0, 0 };
 
 	sf::CircleShape shape;
@@ -19,7 +19,7 @@ public:
 	void update(float deltaTime);
 	void draw(sf::RenderWindow& window);
 
-	Entity(float _radius, float _speed, float _mass, float _angle, float _x, float _y, float _color[4]);
+	Entity(double _radius, double _speed, double _mass, double _angle, double _x, double _y, float _color[4]);
 	~Entity();
 };
 

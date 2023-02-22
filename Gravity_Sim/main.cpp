@@ -6,6 +6,8 @@
 
 #include "Entity.h"
 
+#define G 0.0000000000667
+
 int fromRandom(int a, int b)
 {
     int ret = (rand() % (b - a + 1)) + a;
@@ -17,8 +19,6 @@ int main()
 {
     srand(time(NULL));
     sf::Vector2f screenSize = sf::Vector2f(1200, 1000);
-
-
 
     sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y), "Window Title");
     window.setFramerateLimit(60);
@@ -36,6 +36,7 @@ int main()
     generatePointer.setFillColor(sf::Color(181, 38, 131, 150));
     generatePointer.setOrigin(2, 2);
 
+    
     float angle = 0;
     float speed = 10;
     float mass = 500;
@@ -54,7 +55,7 @@ int main()
 
     for (int i = 0; i < 0; i++)
     {
-        auto temp = std::make_shared<Entity>((float)fromRandom(1, 8), (float)fromRandom(5, 30), 75.0f, (float)fromRandom(0, 365), 300.0f, 400.0f, whiteColor);
+        auto temp = std::make_shared<Entity>((double)fromRandom(1, 8), (double)fromRandom(5, 30), (double)75, (double)fromRandom(0, 365), (double)300, (double)400, whiteColor);
         entities.push_back(temp);
     }
 
@@ -134,13 +135,13 @@ int main()
         ImGui::ColorEdit4("Color", color);
         if (ImGui::Button("Add to generate list"))
         {
-            auto temp = std::make_shared<Entity>((float)mass/100, speed, mass, angle, posX, posY, color);
+            auto temp = std::make_shared<Entity>((double)mass/100, (double)speed, (double)mass, (double)angle, (double)posX, (double)posY, color);
             tempEntities.push_back(temp);
         }
         if (ImGui::Button("Add random object to list"))
         {
-            float tempmass = (float)fromRandom(0, 10000);
-            auto temp = std::make_shared<Entity>((float)(tempmass/100), (float)fromRandom(1, 50), tempmass, (float)fromRandom(0, 365), posX, posY, color);
+            double tempmass = (double)fromRandom(0, 10000);
+            auto temp = std::make_shared<Entity>((double)(tempmass/100), (double)fromRandom(1, 50), (double)tempmass, (double)fromRandom(0, 365), (double)posX, (double)posY, color);
             tempEntities.push_back(temp);
         }
         ImGui::Text("Entities to generate: %i", tempEntities.size());
@@ -156,15 +157,15 @@ int main()
         {
             for (auto e : entities)
             {
-                float ax = 0, ay = 0;
+                double ax = 0, ay = 0;
                 // Gravity math
                 for (auto i : entities)
                 {
                     if (e != i)
                     {
-                        float dx = e->x - i->x;
-                        float dy = e->y - i->y;
-                        float r3;
+                        double dx = e->x - i->x;
+                        double dy = e->y - i->y;
+                        double r3;
                         r3 *= sqrt(r3 = (dx * dx) + (dy * dy));
                         ax -= i->mass * 100 * dx / r3;
                         ax -= i->mass * 100 * dy / r3;

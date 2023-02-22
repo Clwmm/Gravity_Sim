@@ -1,6 +1,6 @@
 #include "Entity.h"
 
-Entity::Entity(float _radius, float _speed, float _mass, float _angle, float _x, float _y, float _color[4])
+Entity::Entity(double _radius, double _speed, double _mass, double _angle, double _x, double _y, float _color[4])
 	:r{ _radius }, speed{ _speed }, mass{_mass}, angle{ _angle }, x{ _x }, y{ _y }
 {
 	color[0] = _color[0];
