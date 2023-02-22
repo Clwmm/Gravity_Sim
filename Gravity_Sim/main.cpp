@@ -3,16 +3,27 @@
 #include "SFML/Graphics.hpp"
 #include <memory>
 #include <iostream>
+#include <cmath>
 
 #include "Entity.h"
 
-#define G 0.0000000000667
+const double G = 6.67e-11;
+const double PI = 3.14159265359;
 
 int fromRandom(int a, int b)
 {
     int ret = (rand() % (b - a + 1)) + a;
     std::cout << ret << std::endl;
     return ret;
+}
+
+bool isInsideCircle(Entity& e, sf::Vector2f mousePos)
+{
+    double dis = pow((mousePos.x - e.x), 2) + pow(mousePos.y - e.y, 2);
+    if (dis <= pow(e.r, 2))
+        return true;
+    else
+        return false;
 }
 
 int main()
@@ -36,6 +47,13 @@ int main()
     generatePointer.setFillColor(sf::Color(181, 38, 131, 150));
     generatePointer.setOrigin(2, 2);
 
+    /*sf::Cursor handCoursor;
+    if (!handCoursor.loadFromSystem(sf::Cursor::Hand))
+        std::cout << "Error loading Hand Cursor" << std::endl;
+    sf::Cursor arrowCoursor;
+    if (!handCoursor.loadFromSystem(sf::Cursor::Arrow))
+        std::cout << "Error loading Arrow Cursor" << std::endl;*/
+    
     
     float angle = 0;
     float speed = 10;
@@ -70,16 +88,15 @@ int main()
 
             /*if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
             {
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                auto temp = std::make_shared<Entity>((float)fromRandom(1, 8), (float)fromRandom(5, 30), 75.0f, (float)fromRandom(0, 365), mousePos.x, mousePos.y, whiteColor);
+                sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+                sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
+                auto temp = std::make_shared<Entity>((float)fromRandom(1, 8), (float)fromRandom(5, 30), 75.0f, (float)fromRandom(0, 365), worldPos.x, worldPos.y, whiteColor);
                 entities.push_back(temp);
             }*/
             if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
             {
                 sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
                 sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
-
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                 posX = worldPos.x;
                 posY = worldPos.y;
             }
@@ -163,19 +180,40 @@ int main()
                 {
                     if (e != i)
                     {
-                        double dx = e->x - i->x;
-                        double dy = e->y - i->y;
-                        double r3;
-                        r3 *= sqrt(r3 = (dx * dx) + (dy * dy));
-                        ax -= i->mass * 100 * dx / r3;
-                        ax -= i->mass * 100 * dy / r3;
+                        double diffx = e->x - i->x;
+                        double diffy = e->y - i->y;
+                        double dis = sqrt((diffx * diffx) + (diffy * diffy));
+                        double F = (G * e->mass*1000 * i->mass*1000) / (dis * dis);
+                        double angle = atan2(diffy, diffx);
+                        double accel = F / e->mass*1000;
+                        ax += -(accel * cos(angle));
+                        ay += -(accel * sin(angle));
+
+                        /*double angle = atan2(i->y - e->y, i->x - e->x) * 180 / PI;
+                        std::cout << angle << std::endl;
+                        double dis = sqrt((i->x - e->x)*(i->x - e->x) + (i->y - e->y)*(i->y - e->y));
+                        double forceG = G * e->mass*100 * i->mass*100 / pow(dis,2);
+                        ax = cos(angle) * 5;
+                        ay = sin(angle) * 5;*/
                     }
                 }
-                e->dx += ax * deltaTime;
-                e->dy += ay * deltaTime;
+                e->ax += ax;
+                e->ay += ay;
 
                 // Update position
                 e->update(deltaTime);
+            }
+        }
+        else
+        {
+            sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+            sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
+            for (auto e : entities)
+            {
+                if (isInsideCircle(*e, worldPos))
+                {
+                    std::cout << "Inside" << std::endl;
+                }
             }
         }
 
@@ -224,5 +262,6 @@ int main()
     ...
 
     dodatki:
+        usuniêciê obiektu mniejszego gdy wszed³ w CA£OŒÆI do innego wiêkszego obiektu
         wyœwietlanie elipsy poruszania siê cia³
 */

@@ -19,13 +19,17 @@ Entity::Entity(double _radius, double _speed, double _mass, double _angle, doubl
 	this->shape.setOrigin(_radius, _radius);
 	this->shape.setPointCount(CIRCLE_SEGMENTS);
 
-	this->dx = cos(this->angle*(-DEGTORAD)) * speed;
-	this->dy = sin(this->angle*(-DEGTORAD)) * speed;
+	this->ax = cos(this->angle*(-DEGTORAD)) * speed;
+	this->ay = sin(this->angle*(-DEGTORAD)) * speed;
 
 }
 
 void Entity::update(float deltaTime)
 {
+	dx += ax * deltaTime;
+	dy += ay * deltaTime;
+
+
 	this->x += deltaTime * this->dx;
 	this->y += deltaTime * this->dy;
 }
