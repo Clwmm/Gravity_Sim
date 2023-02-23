@@ -13,7 +13,6 @@ const double PI = 3.14159265359;
 int fromRandom(int a, int b)
 {
     int ret = (rand() % (b - a + 1)) + a;
-    std::cout << ret << std::endl;
     return ret;
 }
 
@@ -86,13 +85,13 @@ int main()
         {
             ImGui::SFML::ProcessEvent(event);
 
-            /*if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
             {
                 sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
                 sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
                 auto temp = std::make_shared<Entity>((float)fromRandom(1, 8), (float)fromRandom(5, 30), 75.0f, (float)fromRandom(0, 365), worldPos.x, worldPos.y, whiteColor);
                 entities.push_back(temp);
-            }*/
+            }
             if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
             {
                 sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
@@ -152,13 +151,13 @@ int main()
         ImGui::ColorEdit4("Color", color);
         if (ImGui::Button("Add to generate list"))
         {
-            auto temp = std::make_shared<Entity>((double)mass/100, (double)speed, (double)mass, (double)angle, (double)posX, (double)posY, color);
+            auto temp = std::make_shared<Entity>((double)mass/1000, (double)speed, (double)mass, (double)angle, (double)posX, (double)posY, color);
             tempEntities.push_back(temp);
         }
         if (ImGui::Button("Add random object to list"))
         {
             double tempmass = (double)fromRandom(0, 10000);
-            auto temp = std::make_shared<Entity>((double)(tempmass/100), (double)fromRandom(1, 50), (double)tempmass, (double)fromRandom(0, 365), (double)posX, (double)posY, color);
+            auto temp = std::make_shared<Entity>((double)(tempmass/1000), (double)fromRandom(1, 50), (double)tempmass, (double)fromRandom(0, 365), (double)posX, (double)posY, color);
             tempEntities.push_back(temp);
         }
         ImGui::Text("Entities to generate: %i", tempEntities.size());
